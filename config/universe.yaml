@@ -1,0 +1,29 @@
+# Universe for the backtest, defined as four sleeves. Each sleeve becomes ONE IDR total-return
+# series, so no asset class is swamped by the number of stocks in another.
+base_currency: IDR
+
+sleeves:
+  idx_equities:
+    currency: IDR
+    members: []              # Yahoo tickers with the .JK suffix, e.g. TLKM.JK
+    weighting: equal
+    rebalance: monthly
+    frozen_on: null          # date the list is finalized, e.g. 2026-10-03. Freeze it: picking
+                             # today's large caps and testing backwards flatters results.
+  us_equities:
+    currency: USD
+    members: [SPY]           # S&P 500 ETF; adjusted prices include dividends
+  gold:
+    currency: USD
+    members: [GLD]           # gold price proxy
+  crypto:
+    currency: USD
+    members: [BTC-USD, ETH-USD]
+    weighting: equal
+    rebalance: monthly
+
+fx:
+  usd_idr: USDIDR=X
+
+benchmarks:
+  reference_index: ^JKSE     # IHSG, a price index without dividends, reference line only

@@ -1,0 +1,20 @@
+# Implementation costs per sleeve.
+# Every value is null on purpose: fill them from your broker's, exchange's and platform's
+# CURRENT fee pages. Do not guess. Set confirmed: true once everything below is filled in.
+confirmed: false
+as_of: null                # date the numbers were looked up
+idx_equities:
+  buy_fee_pct: null        # fee on buys, percent of trade value
+  sell_fee_pct: null       # fee on sells
+  sell_tax_pct: null       # final tax on sells, if not already inside sell_fee_pct
+us_equities:
+  trading_fee_pct: null    # fee per buy or sell on the platform used
+  fx_spread_pct: null      # IDR/USD conversion cost per conversion
+gold:
+  spread_pct: null         # buy/sell spread of the gold product actually used
+crypto:
+  trading_fee_pct: null
+  tax_pct: null
+slippage_pct: 0.0          # optional extra cost per trade, percent
+cash:
+  annual_yield_pct: null   # assumed yield on cash waiting in a money-market fund

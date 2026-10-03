@@ -1,0 +1,4 @@
+# Copy to config/local.yaml (git-ignored) and put real numbers there.
+# The public repo and the public demo only ever use the example values below.
+monthly_contribution_idr: 1000000   # example only
+current_holdings: {}                # example only; real holdings stay in local.yaml

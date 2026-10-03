@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Project (anchored with a leading slash so src/allocation_lab/data/ is NOT ignored)
+/data/
+config/local.yaml
+.env
+.DS_Store
