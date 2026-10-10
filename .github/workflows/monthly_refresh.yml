@@ -1,0 +1,66 @@
+name: Monthly data refresh and report
+
+# Runs on the 1st of every month at 06:00 WIB (UTC+7 = 23:00 UTC previous day).
+# Also manually triggerable from the Actions tab.
+# NOTE: GitHub auto-disables scheduled workflows on repos with no activity for
+# 60 days. Keep a commit or activity each month, or switch to AWS EventBridge.
+on:
+  schedule:
+    - cron: "0 23 28-31 * *"   # Last few days — finds first day of next month via Python
+  workflow_dispatch:
+    inputs:
+      contribution_override:
+        description: "Monthly contribution in IDR (leave blank to use local.yaml example)"
+        required: false
+        default: ""
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write    # needed to push forward_log.csv update
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Fetch fresh data
+        run: python -m allocation_lab.data.pipeline
+
+      - name: Run tests
+        run: pytest -q
+
+      - name: Generate monthly report
+        run: |
+          python -m allocation_lab.reporting.monthly_report \
+            ${{ inputs.contribution_override && format('--contribution {0}', inputs.contribution_override) || '' }} \
+            | tee monthly_report_$(date +%Y-%m).txt
+
+      - name: Append to forward log
+        run: |
+          python -m allocation_lab.reporting.forward_log append \
+            ${{ inputs.contribution_override && format('--contribution {0}', inputs.contribution_override) || '' }}
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: monthly-report-${{ github.run_id }}
+          path: monthly_report_*.txt
+          retention-days: 90
+
+      - name: Commit forward log update
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add forward_log.csv
+          git diff --staged --quiet || git commit -m "chore: monthly forward log update $(date +%Y-%m)"
+          git push

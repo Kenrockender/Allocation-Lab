@@ -12,4 +12,5 @@ __pycache__/
 !/data/external/bi_rate.csv.example
 config/local.yaml
 .env
+.streamlit/secrets.toml
 .DS_Store

@@ -11,9 +11,11 @@ requires-python = ">=3.10"
 dependencies = [
     "numpy",
     "pandas",
+    "plotly",
     "pyarrow",
     "pyyaml",
     "scipy",
+    "streamlit",
     "yfinance",
 ]
 
