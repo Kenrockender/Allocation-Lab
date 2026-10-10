@@ -89,11 +89,39 @@ pip install -e ".[dev]"
 pytest                         # 79 tests
 ```
 
-## Build the data
+## Run the dashboard locally
 
 ```bash
-python -m allocation_lab.data.pipeline
+streamlit run app/dashboard.py
 ```
+
+Opens at http://localhost:8501. Five tabs: This Month signals, Asset Stats,
+Strategy Comparison, Drawdowns, Correlation heatmap.
+
+## Deploy to Streamlit Community Cloud
+
+1. Push the repo to GitHub (public or private).
+2. Go to [share.streamlit.io](https://share.streamlit.io) → New app.
+3. Set **Main file path:** `app/dashboard.py`.
+4. In **Secrets**, add `monthly_contribution_idr = 5000000` (example amount).
+5. The app will use the parquet files committed or fetched at deploy time.
+   Add a GitHub Actions step to commit `data/processed/*.parquet` if you want
+   fresh data on the public demo (be mindful of file sizes).
+
+## Monthly routine (automated via GitHub Actions)
+
+The workflow `.github/workflows/monthly_refresh.yml` runs on the last few days
+of each month (cron `0 23 28-31 * *`), which catches the first trading day of
+the next month. It:
+1. Fetches fresh price data
+2. Runs all 79 tests
+3. Generates the monthly report
+4. Appends weights to `forward_log.csv` and commits it
+
+**Note:** GitHub auto-disables scheduled workflows after 60 days of repo inactivity.
+Trigger it manually from the Actions tab or push a commit each month to keep it live.
+
+
 
 Downloads ~25 tickers from Yahoo Finance, aligns calendars, converts to IDR,
 runs quality checks. Takes ~2 minutes on a first run.
@@ -143,7 +171,7 @@ python -m allocation_lab.research.run_phase4 boot --sims 100  # bootstrap
 | 2 | Analytics | ✓ Done |
 | 3 | Backtester | ✓ Done |
 | 4 | Validation and findings | ✓ Done — **v0.1** |
-| 5 | Dashboard and automation | Not started |
+| 5 | Dashboard and automation | ✓ Done — **v0.2** |
 | 6 | Deep learning module (optional) | Not started |
 
 See [plan.md](plan.md) for detailed task lists and [docs/findings.md](docs/findings.md)
