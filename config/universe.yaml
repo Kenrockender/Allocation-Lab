@@ -5,17 +5,44 @@ base_currency: IDR
 sleeves:
   idx_equities:
     currency: IDR
-    members: []              # Yahoo tickers with the .JK suffix, e.g. TLKM.JK
+    # Top-20 IDX constituents by market cap, frozen on 2026-10-10.
+    # Source: stockanalysis.com/list/indonesia-stock-exchange/ (accessed 2026-10-10).
+    # Survivorship-bias note: this list reflects today's large caps. Backtesting on
+    # this frozen list will flatter results vs a true point-in-time index. That
+    # limitation is documented in docs/decisions.md and the README.
+    members:
+      - BBCA.JK   # Bank Central Asia
+      - BBRI.JK   # Bank Rakyat Indonesia
+      - BMRI.JK   # Bank Mandiri
+      - TLKM.JK   # Telkom Indonesia
+      - ASII.JK   # Astra International
+      - BBNI.JK   # Bank Negara Indonesia
+      - UNTR.JK   # United Tractors
+      - ICBP.JK   # Indofood CBP
+      - ANTM.JK   # Aneka Tambang (Antam)
+      - INDF.JK   # Indofood Sukses Makmur
+      - UNVR.JK   # Unilever Indonesia
+      - CPIN.JK   # Charoen Pokphand Indonesia
+      - KLBF.JK   # Kalbe Farma
+      - PGAS.JK   # Perusahaan Gas Negara
+      - PTBA.JK   # Bukit Asam
+      - ISAT.JK   # Indosat Ooredoo Hutchison
+      - BRIS.JK   # Bank Syariah Indonesia
+      - HMSP.JK   # Hanjaya Mandala Sampoerna
+      - MDKA.JK   # Merdeka Copper Gold
+      - BNLI.JK   # Bank Permata
     weighting: equal
     rebalance: monthly
-    frozen_on: null          # date the list is finalized, e.g. 2026-10-03. Freeze it: picking
-                             # today's large caps and testing backwards flatters results.
+    frozen_on: "2026-10-10"   # date the list is finalized — do not change after Phase 1
+
   us_equities:
     currency: USD
     members: [SPY]           # S&P 500 ETF; adjusted prices include dividends
+
   gold:
     currency: USD
-    members: [GLD]           # gold price proxy
+    members: [GLD]           # gold price proxy (USD); local spread goes in costs.yaml
+
   crypto:
     currency: USD
     members: [BTC-USD, ETH-USD]
@@ -23,7 +50,7 @@ sleeves:
     rebalance: monthly
 
 fx:
-  usd_idr: USDIDR=X
+  usd_idr: USDIDR=X          # Yahoo Finance ticker for USD/IDR spot rate
 
 benchmarks:
-  reference_index: ^JKSE     # IHSG, a price index without dividends, reference line only
+  reference_index: ^JKSE     # IHSG; a price index without dividends — reference line only

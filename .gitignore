@@ -9,6 +9,7 @@ __pycache__/
 
 # Project (anchored with a leading slash so src/allocation_lab/data/ is NOT ignored)
 /data/
+!/data/external/bi_rate.csv.example
 config/local.yaml
 .env
 .DS_Store

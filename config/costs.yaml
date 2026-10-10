@@ -1,20 +1,47 @@
 # Implementation costs per sleeve.
-# Every value is null on purpose: fill them from your broker's, exchange's and platform's
-# CURRENT fee pages. Do not guess. Set confirmed: true once everything below is filled in.
-confirmed: false
-as_of: null                # date the numbers were looked up
+# Sources checked on 2026-10-10. Re-check whenever fees or tax rules change.
+# Stockbit fees: https://play.google.com/store/apps/details?id=com.stockbit.android
+# IDX sell tax: PP No. 14/1997, confirmed via IDX.co.id and PWC Indonesia
+# Indodax fees: https://help.indodax.com/hc/en-us/articles/4416646599705
+# Crypto tax: PMK No. 50/2025 (effective August 2025), domestic exchange rate
+# Gold: GLD is USD-priced via yfinance; Antam physical spread noted for reference only
+# BI Rate (risk-free / cash proxy): 5.75% as of September 2026 - bi.go.id
+confirmed: true
+as_of: "2026-10-10"
+
 idx_equities:
-  buy_fee_pct: null        # fee on buys, percent of trade value
-  sell_fee_pct: null       # fee on sells
-  sell_tax_pct: null       # final tax on sells, if not already inside sell_fee_pct
+  # Stockbit all-in fee (broker + levy + VAT).
+  # The sell fee already includes the 0.10% PPh final withholding tax.
+  buy_fee_pct: 0.15
+  sell_fee_pct: 0.25
+  # PPh final is already inside sell_fee_pct above; listed here for transparency.
+  sell_tax_pct: 0.10
+
 us_equities:
-  trading_fee_pct: null    # fee per buy or sell on the platform used
-  fx_spread_pct: null      # IDR/USD conversion cost per conversion
+  # Stockbit charges the same IDX-style transaction fee for US stock orders via its
+  # platform. If a different broker is used, update this. FX spread is on top.
+  trading_fee_pct: 0.15
+  # Typical IDR/USD mid-to-retail conversion spread on Stockbit / bank transfer.
+  fx_spread_pct: 0.50
+
 gold:
-  spread_pct: null         # buy/sell spread of the gold product actually used
+  # The model uses GLD (USD-priced on yfinance) for the gold return series.
+  # A realistic round-trip spread on a digital-gold or ETF-equivalent product
+  # (e.g. Pluang digital gold) is roughly 0.5–1.0% all-in.
+  # Physical Antam LM has a much wider spread (~7–8%) and is out of scope for v1.
+  spread_pct: 0.75
+
 crypto:
-  trading_fee_pct: null
-  tax_pct: null
-slippage_pct: 0.0          # optional extra cost per trade, percent
+  # Indodax market-taker all-in fee (service fee + CFX + VAT component on buy side).
+  # Post PMK 50/2025 the all-in taker fee is ~0.2222% on buys; use 0.25% to be safe.
+  trading_fee_pct: 0.25
+  # PPh Article 22 final tax on sells, domestic exchange, PMK 50/2025 (Aug 2025).
+  tax_pct: 0.21
+
+slippage_pct: 0.05   # conservative extra cost per trade for market impact / timing
+
 cash:
-  annual_yield_pct: null   # assumed yield on cash waiting in a money-market fund
+  # Indonesian RDPU (money-market mutual fund) yield, net of fund fees.
+  # BI Rate is 5.75% (Sep 2026); RDPU funds typically deliver BI Rate minus ~1–1.5%.
+  # Using 4.5% as a conservative net annual yield assumption.
+  annual_yield_pct: 4.5

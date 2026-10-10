@@ -1,1 +1,1 @@
-"""Fetching, cleaning, calendar alignment and FX conversion."""
+"""Data layer: fetch, align, FX conversion, quality checks."""

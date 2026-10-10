@@ -13,6 +13,7 @@ dependencies = [
     "pandas",
     "pyarrow",
     "pyyaml",
+    "scipy",
     "yfinance",
 ]
 

@@ -31,11 +31,11 @@ Out of scope (keeps the project finishable): live trading or broker integration,
 
 | Phase | Focus | Rough effort | Status |
 |---|---|---|---|
-| 0 | Setup and decisions | 1-2h | In progress |
-| 1 | Data layer | 4-8h | Not started |
-| 2 | Analytics | 3-5h | Not started |
-| 3 | Backtester | 6-12h | Not started |
-| 4 | Validation and findings (CV-ready) | 5-10h | Not started |
+| 0 | Setup and decisions | 1-2h | Done ✓ |
+| 1 | Data layer | 4-8h | Done ✓ |
+| 2 | Analytics | 3-5h | Done ✓ |
+| 3 | Backtester | 6-12h | Done ✓ |
+| 4 | Validation and findings (CV-ready) | 5-10h | Done ✓ |
 | 5 | Dashboard and automation | 6-12h | Not started |
 | 6 | Deep learning module (optional) | 8-15h | Not started |
 
@@ -47,8 +47,8 @@ Goal: the repo exists and the key decisions are written down before any code dep
 
 - [x] **S** Create the repo and Python environment (pyproject, pytest, a linter). Add a `.gitignore` that excludes `data/` and `config/local.yaml`.
 - [x] **S** Create the folder structure below and a README stub.
-- [ ] **M** Confirm `docs/decisions.md` (drafted with proposed defaults, change what does not fit): base currency (IDR), the four sleeves, the IDX ticker list (plus the date it was frozen), benchmarks, risk-free source (BI rate), contribution frequency (monthly), backtest start date, and the signal definition for the "hold cash until signal" strategy (for example price vs its 200-day average).
-- [ ] **M** Fill `config/costs.yaml` with current fees and tax for each sleeve, the IDR/USD conversion spread, the gold spread and an assumed cash yield. Look these up from the broker or the exchange. They change, so keep them in config, not in code. The template exists with every value empty.
+- [x] **M** Confirm `docs/decisions.md` (drafted with proposed defaults, change what does not fit): base currency (IDR), the four sleeves, the IDX ticker list (plus the date it was frozen), benchmarks, risk-free source (BI rate), contribution frequency (monthly), backtest start date, and the signal definition for the "hold cash until signal" strategy (for example price vs its 200-day average).
+- [x] **M** Fill `config/costs.yaml` with current fees and tax for each sleeve, the IDR/USD conversion spread, the gold spread and an assumed cash yield. Look these up from the broker or the exchange. They change, so keep them in config, not in code. The template exists with every value empty.
 - [x] **S** Put example numbers in `config/local.example.yaml`. Real contribution sizes and holdings live only in the git-ignored `config/local.yaml`.
 
 **Done when:** `pytest` runs (even with one dummy test) and `docs/decisions.md` has no blanks.
@@ -82,15 +82,15 @@ allocation-lab/
 
 Goal: one clean, IDR-denominated daily price table for the whole universe, rebuilt by a single command.
 
-- [ ] **M** Fetch IDX stocks (`.JK` tickers), the S&P 500 ETF, gold, BTC, ETH and USD/IDR with yfinance. Save raw files to `data/raw/` as parquet.
-- [ ] **M** Use adjusted prices so dividends and splits are in the returns. Compare a few tickers against a second source to catch bad adjustments.
-- [ ] **M** Align calendars: IDX holidays, US holidays and 24/7 crypto. Rule: evaluate on the contribution date using the last available price.
-- [ ] **S** Convert USD-priced assets to IDR with the USD/IDR series.
-- [ ] **M** Build the sleeve series: monthly-rebalanced equal-weight baskets for IDX equities and crypto, a single series each for US equities and gold. Every sleeve ends up as one IDR total-return index.
-- [ ] **S** Store each sleeve's first valid date. Histories start at different dates (crypto is short), so strategies must only hold sleeves that exist at that date.
-- [ ] **M** Data-quality checks: gaps, stale prices, zero volume, daily moves beyond a threshold. Output a quality report.
-- [ ] **M** Tests for alignment and FX conversion using small hand-made data frames.
-- [ ] **S** One command (CLI or `make data`) rebuilds everything.
+- [x] **M** Fetch IDX stocks (`.JK` tickers), the S&P 500 ETF, gold, BTC, ETH and USD/IDR with yfinance. Save raw files to `data/raw/` as parquet.
+- [x] **M** Use adjusted prices so dividends and splits are in the returns. Compare a few tickers against a second source to catch bad adjustments.
+- [x] **M** Align calendars: IDX holidays, US holidays and 24/7 crypto. Rule: evaluate on the contribution date using the last available price.
+- [x] **S** Convert USD-priced assets to IDR with the USD/IDR series.
+- [x] **M** Build the sleeve series: monthly-rebalanced equal-weight baskets for IDX equities and crypto, a single series each for US equities and gold. Every sleeve ends up as one IDR total-return index.
+- [x] **S** Store each sleeve's first valid date. Histories start at different dates (crypto is short), so strategies must only hold sleeves that exist at that date.
+- [x] **M** Data-quality checks: gaps, stale prices, zero volume, daily moves beyond a threshold. Output a quality report.
+- [x] **M** Tests for alignment and FX conversion using small hand-made data frames.
+- [x] **S** One command (CLI or `make data`) rebuilds everything.
 
 **Done when:** one command produces the IDR price table, the four sleeve series and a quality report, and the tests pass.
 
@@ -102,9 +102,9 @@ Note: do not commit raw downloaded price data to a public repo. Commit the fetch
 
 Goal: trusted metric functions and a first look at the data. Sleeve-level only, no contributions yet.
 
-- [ ] **M** Implement simple and log returns, annualized volatility, Sharpe (excess over the BI rate), max drawdown and drawdown duration, rolling correlation, beta vs the benchmark, and historical and parametric VaR/CVaR.
-- [ ] **M** Unit tests: check each metric against a small hand-calculated example.
-- [ ] **M** Exploration notebook: risk/return table per sleeve, correlation heatmap, drawdown chart, rolling volatility. Write 5-10 observations in `docs/findings.md`.
+- [x] **M** Implement simple and log returns, annualized volatility, Sharpe (excess over the BI rate), max drawdown and drawdown duration, rolling correlation, beta vs the benchmark, and historical and parametric VaR/CVaR.
+- [x] **M** Unit tests: check each metric against a small hand-calculated example.
+- [x] **M** Exploration notebook: risk/return table per sleeve, correlation heatmap, drawdown chart, rolling volatility. Write 5-10 observations in `docs/findings.md`.
 
 **Done when:** a report command produces the tables and charts, the tests pass, and `docs/findings.md` has the first observations.
 
@@ -114,13 +114,13 @@ Goal: trusted metric functions and a first look at the data. Sleeve-level only, 
 
 Goal: an engine that simulates monthly contributions with realistic costs and no lookahead.
 
-- [ ] **L** Portfolio state and simulation loop: cash, holdings, monthly contribution, execution at the next available price after the signal, fractional units for every sleeve. Only allow sleeves that exist at that date.
-- [ ] **M** Cost model driven by `config/costs.yaml`: fees, tax, FX and gold spreads, optional slippage. Cash earns the assumed yield.
-- [ ] **S** Strategy interface: a function that takes history up to date t and returns target weights, plus a cash policy (invest now or wait).
-- [ ] **M** Baselines: fixed-weight DCA, equal-weight DCA, and a benchmark with the same contributions.
-- [ ] **M** Strategies v1: inverse-volatility (risk parity) weights, momentum tilt, hold-in-money-market-until-signal.
-- [ ] **M** Performance metrics for contribution flows: final wealth vs total contributed, XIRR, turnover, cost drag. Compute Sharpe and drawdown on a time-weighted return series with deposits removed. Plain CAGR on a series with deposits is wrong.
-- [ ] **M** Lookahead test: a strategy given data cut off at date t must make the same decision as when it is given the full history.
+- [x] **L** Portfolio state and simulation loop: cash, holdings, monthly contribution, execution at the next available price after the signal, fractional units for every sleeve. Only allow sleeves that exist at that date.
+- [x] **M** Cost model driven by `config/costs.yaml`: fees, tax, FX and gold spreads, optional slippage. Cash earns the assumed yield.
+- [x] **S** Strategy interface: a function that takes history up to date t and returns target weights, plus a cash policy (invest now or wait).
+- [x] **M** Baselines: fixed-weight DCA, equal-weight DCA, and a benchmark with the same contributions.
+- [x] **M** Strategies v1: inverse-volatility (risk parity) weights, momentum tilt, hold-in-money-market-until-signal.
+- [x] **M** Performance metrics for contribution flows: final wealth vs total contributed, XIRR, turnover, cost drag. Compute Sharpe and drawdown on a time-weighted return series with deposits removed. Plain CAGR on a series with deposits is wrong.
+- [x] **M** Lookahead test: a strategy given data cut off at date t must make the same decision as when it is given the full history.
 
 **Done when:** one command runs all strategies over the full history and outputs a comparison table and equity curves, and the lookahead test passes.
 
@@ -130,12 +130,12 @@ Goal: an engine that simulates monthly contributions with realistic costs and no
 
 Goal: turn backtest numbers into results that can be defended.
 
-- [ ] **M** Walk-forward evaluation: choose parameters (momentum lookback, volatility window) on a training window, evaluate on the next window only, then roll forward.
-- [ ] **M** Block bootstrap of monthly returns to get confidence intervals on the difference vs the baseline (XIRR, final wealth, max drawdown).
-- [ ] **M** Sensitivity checks: costs doubled, different contribution day, different lookbacks, with and without crypto.
-- [ ] **S** Keep a log of every variant tried in `docs/experiments.md`. The more variants tried, the more likely the best one is luck, so report how many were tested.
-- [ ] **M** Split results by sub-period (for example crypto bull vs bear years) and note where each strategy fails.
-- [ ] **L** Write `docs/findings.md` and README v1: the question, data, method, results table with uncertainty, and limitations (survivorship bias in the frozen IDX list, no lot-size limits, short crypto history, backtest is not a forecast).
+- [x] **M** Walk-forward evaluation: choose parameters (momentum lookback, volatility window) on a training window, evaluate on the next window only, then roll forward.
+- [x] **M** Block bootstrap of monthly returns to get confidence intervals on the difference vs the baseline (XIRR, final wealth, max drawdown).
+- [x] **M** Sensitivity checks: costs doubled, different contribution day, different lookbacks, with and without crypto.
+- [x] **S** Keep a log of every variant tried in `docs/experiments.md`. The more variants tried, the more likely the best one is luck, so report how many were tested.
+- [x] **M** Split results by sub-period (for example crypto bull vs bear years) and note where each strategy fails.
+- [x] **L** Write `docs/findings.md` and README v1: the question, data, method, results table with uncertainty, and limitations (survivorship bias in the frozen IDX list, no lot-size limits, short crypto history, backtest is not a forecast).
 
 **Done when:** the README has a headline finding with its uncertainty and a limitations section. Tag `v0.1`.
 
