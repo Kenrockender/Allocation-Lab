@@ -1,0 +1,12 @@
+# Pinned for Streamlit Community Cloud deployment.
+# Update after testing a new version locally.
+# Install the local package so src/allocation_lab is importable
+-e .
+numpy==2.4.6
+pandas==3.0.6
+pyarrow==25.0.1
+pyyaml==6.0.3
+scipy==1.17.1
+streamlit==1.65.0
+plotly==7.1.0
+yfinance==1.7.0

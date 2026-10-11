@@ -31,6 +31,84 @@ st.set_page_config(
 )
 
 # ------------------------------------------------------------------ #
+# Data bootstrap — fetch on first run if files are missing            #
+# ------------------------------------------------------------------ #
+
+def _ensure_data() -> None:
+    """Run the data pipeline if processed files are absent.
+
+    This happens on a fresh Streamlit Cloud deploy where data/ is gitignored.
+    Shows a progress message so the user knows what's happening.
+    """
+    sleeve_path = ROOT / "data" / "processed" / "sleeve_indices.parquet"
+    if sleeve_path.exists():
+        return
+
+    msg = st.empty()
+    msg.info(
+        "⏳ First run detected — fetching price data (~2 min). "
+        "This only happens once per deployment."
+    )
+    bar = st.progress(0, text="Fetching raw data …")
+
+    try:
+        from allocation_lab.data import fetch, align, quality
+
+        bar.progress(10, text="Fetching raw prices from Yahoo Finance …")
+        fetch.fetch_all(start="2017-01-01")
+
+        bar.progress(60, text="Aligning calendars and converting to IDR …")
+        align.run(start="2018-01-01")
+
+        bar.progress(85, text="Running quality checks …")
+        quality.run(save_report=True)
+
+        bar.progress(95, text="Running backtest to build NAV curves …")
+        _build_nav_curves()
+
+        bar.progress(100, text="Done!")
+        msg.success("✅ Data ready.")
+    except Exception as exc:
+        msg.error(f"Data pipeline failed: {exc}")
+        st.stop()
+
+
+def _build_nav_curves() -> None:
+    """Build and cache the NAV curves parquet (needed for strategy comparison tab)."""
+    nav_path = ROOT / "data" / "processed" / "nav_curves.parquet"
+    if nav_path.exists():
+        return
+    import pandas as pd
+    from allocation_lab.backtest.engine import run_backtest
+    from allocation_lab.strategies.baselines import EqualWeightDCA, SingleSleeveDCA, FixedWeightDCA
+    from allocation_lab.strategies.v1 import InverseVolatilityDCA, MomentumDCA, TrendFilterDCA
+
+    sleeve_df = pd.read_parquet(ROOT / "data/processed/sleeve_indices.parquet")
+    strategies = [
+        EqualWeightDCA(),
+        SingleSleeveDCA("idx_equities"),
+        SingleSleeveDCA("us_equities"),
+        FixedWeightDCA(
+            {"idx_equities": 0.30, "us_equities": 0.30, "gold": 0.20, "crypto": 0.20},
+            name="fixed_30_30_20_20",
+        ),
+        InverseVolatilityDCA(),
+        MomentumDCA(),
+        TrendFilterDCA(),
+    ]
+    nav_df = pd.concat(
+        [run_backtest(s, sleeve_df, contribution_idr=5_000_000).nav_series
+         for s in strategies],
+        axis=1,
+    )
+    nav_df.to_parquet(nav_path)
+
+
+# Run bootstrap on every page load (fast if files exist)
+_ensure_data()
+
+
+# ------------------------------------------------------------------ #
 # Helpers                                                              #
 # ------------------------------------------------------------------ #
 
@@ -43,7 +121,7 @@ def load_sleeves() -> pd.DataFrame:
 def load_nav_curves() -> pd.DataFrame:
     p = ROOT / "data/processed/nav_curves.parquet"
     if not p.exists():
-        return pd.DataFrame()
+        _build_nav_curves()
     return pd.read_parquet(p)
 
 

@@ -42,6 +42,13 @@ def _load_local_config() -> dict:
 def load_sleeve_df() -> pd.DataFrame:
     path = ROOT / "data" / "processed" / "sleeve_indices.parquet"
     if not path.exists():
+        # Try to run the pipeline automatically (works in CI / Streamlit Cloud)
+        import logging
+        logging.warning("sleeve_indices.parquet missing — running data pipeline …")
+        from allocation_lab.data import fetch, align
+        fetch.fetch_all(start="2017-01-01")
+        align.run(start="2018-01-01")
+    if not path.exists():
         raise FileNotFoundError(
             "sleeve_indices.parquet not found. Run: python -m allocation_lab.data.pipeline"
         )
