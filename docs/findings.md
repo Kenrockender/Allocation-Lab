@@ -202,3 +202,107 @@ During COVID crash (Feb–Apr 2020):
 
 10. **Gold is the standout performer in 2025–2026 YTD (+76.5%).** Consistent with elevated
     geopolitical and inflation uncertainty.
+
+---
+
+## Phase 6 — Deep learning volatility overlay (2018–2026)
+
+**Method:** Two volatility forecasters used as a risk-scaling overlay on top of equal-weight DCA.
+  - EWMA (λ=0.94): RiskMetrics exponential smoothing — zero parameters, the hard baseline.
+  - GRU: 1-layer GRU (hidden=32), input = 63-day window of (r, |r|, r²), target = log(realised vol next 21 days). Walk-forward: retrained every 12 months on the prior 36 months. Early stopping (patience=20).
+
+**Vol scaling:** `scale = min(1, target_vol / forecast_vol)` per sleeve, target vol = 15% p.a.
+No leverage — scaling only reduces exposure, never exceeds 100%.
+
+### Forecast accuracy (70/30 train/test split)
+
+```
+              ewma_rmse  gru_rmse  gru_vs_ewma_pct
+sleeve                                            
+idx_equities     0.0252    0.0836         231.8361
+us_equities      0.0328    0.0736         124.7190
+gold             0.0317    0.1009         218.4608
+crypto           0.0561    0.1475         162.8951
+```
+
+**GRU did not beat the EWMA baseline** on vol forecast RMSE.
+With only ~8 years of daily data (~2000 rows), the GRU has very limited training signal.
+The EWMA is a strong baseline at this data scale — it requires no training and captures
+the heavy-tailed, autocorrelated structure of financial volatility well.
+
+### Backtest comparison
+
+```
+                  total_return_pct  xirr_pct  sharpe_twr  max_dd_pct
+strategy                                                            
+equal_weight_dca            202.32     24.30        1.02      -50.92
+ewma_overlay_dca            139.65     19.27        1.20      -22.01
+gru_overlay_dca             156.65     20.75        1.12      -34.50
+```
+
+### Observations
+
+- The EWMA overlay did not improve XIRR vs equal-weight DCA (19.3% vs 24.3%).
+- The GRU overlay achieved XIRR of 20.7%.
+- EWMA overlay reduced max drawdown (-22.0% vs baseline -50.9%).
+- The vol-scaling overlay reduces exposure during high-vol regimes (e.g. COVID March 2020,
+  crypto bear 2022). Whether this improves risk-adjusted returns depends on whether the
+  volatility forecast is timely — EWMA typically lags the initial spike.
+- With ~2000 daily observations split across 4 sleeves, the GRU is data-limited.
+  A larger dataset (more assets, longer history, or higher frequency) would be needed
+  to demonstrate reliable GRU outperformance over a well-calibrated EWMA.
+- **Honest conclusion:** the vol-scaling overlay adds modest complexity for marginal or
+  no improvement in this dataset. The EWMA version may be worth including as a
+  defensive option; the GRU version requires more data to justify the added complexity.
+
+---
+
+## Phase 6 — Deep learning volatility overlay (2018–2026)
+
+**Method:** Two volatility forecasters used as a risk-scaling overlay on top of equal-weight DCA.
+  - EWMA (λ=0.94): RiskMetrics exponential smoothing — zero parameters, the hard baseline.
+  - GRU: 1-layer GRU (hidden=32), input = 63-day window of (r, |r|, r²), target = log(realised vol next 21 days). Walk-forward: retrained every 12 months on the prior 36 months. Early stopping (patience=20).
+
+**Vol scaling:** `scale = min(1, target_vol / forecast_vol)` per sleeve, target vol = 15% p.a.
+No leverage — scaling only reduces exposure, never exceeds 100%.
+
+### Forecast accuracy (70/30 train/test split)
+
+```
+              ewma_rmse  gru_rmse  gru_vs_ewma_pct
+sleeve                                            
+idx_equities     0.0252    0.0836         231.8609
+us_equities      0.0328    0.0736         124.7242
+gold             0.0317    0.1009         218.4642
+crypto           0.0561    0.1475         162.8154
+```
+
+**GRU did not beat the EWMA baseline** on vol forecast RMSE.
+With only ~8 years of daily data (~2000 rows), the GRU has very limited training signal.
+The EWMA is a strong baseline at this data scale — it requires no training and captures
+the heavy-tailed, autocorrelated structure of financial volatility well.
+
+### Backtest comparison
+
+```
+                  total_return_pct  xirr_pct  sharpe_twr  max_dd_pct
+strategy                                                            
+equal_weight_dca            202.32     24.30        1.02      -50.92
+ewma_overlay_dca            139.65     19.27        1.20      -22.01
+gru_overlay_dca             156.65     20.75        1.12      -34.50
+```
+
+### Observations
+
+- The EWMA overlay did not improve XIRR vs equal-weight DCA (19.3% vs 24.3%).
+- The GRU overlay achieved XIRR of 20.7%.
+- EWMA overlay reduced max drawdown (-22.0% vs baseline -50.9%).
+- The vol-scaling overlay reduces exposure during high-vol regimes (e.g. COVID March 2020,
+  crypto bear 2022). Whether this improves risk-adjusted returns depends on whether the
+  volatility forecast is timely — EWMA typically lags the initial spike.
+- With ~2000 daily observations split across 4 sleeves, the GRU is data-limited.
+  A larger dataset (more assets, longer history, or higher frequency) would be needed
+  to demonstrate reliable GRU outperformance over a well-calibrated EWMA.
+- **Honest conclusion:** the vol-scaling overlay adds modest complexity for marginal or
+  no improvement in this dataset. The EWMA version may be worth including as a
+  defensive option; the GRU version requires more data to justify the added complexity.

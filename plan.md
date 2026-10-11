@@ -163,10 +163,10 @@ Goal: a live demo plus a monthly routine that runs by itself.
 
 Goal: test whether a learned volatility forecast or regime detector improves risk control.
 
-- [ ] **M** Baseline first: EWMA volatility forecast. Define the metric (forecast error vs realized volatility, or drawdown reduction when exposure is scaled by the forecast).
-- [ ] **L** Model: a small LSTM/GRU or Transformer for next-period volatility, or a Hidden Markov Model for regimes. Train with walk-forward splits only. Keep it small, the data is limited.
-- [ ] **M** Plug it into the backtester as a risk-scaling overlay and compare against the EWMA overlay.
-- [ ] **S** Document the result honestly, including if it does not beat the baseline.
+- [x] **M** Baseline first: EWMA volatility forecast. Define the metric (forecast error vs realized volatility, or drawdown reduction when exposure is scaled by the forecast).
+- [x] **L** Model: a small LSTM/GRU or Transformer for next-period volatility, or a Hidden Markov Model for regimes. Train with walk-forward splits only. Keep it small, the data is limited.
+- [x] **M** Plug it into the backtester as a risk-scaling overlay and compare against the EWMA overlay.
+- [x] **S** Document the result honestly, including if it does not beat the baseline.
 
 **Done when:** a comparison table is in `docs/findings.md`. Tag `v0.3`.
 

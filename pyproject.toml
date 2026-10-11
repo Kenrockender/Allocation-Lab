@@ -24,6 +24,11 @@ dev = [
     "pytest",
     "ruff",
 ]
+dl = [
+    # GPU build: pip install torch --index-url https://download.pytorch.org/whl/cu128
+    # CPU build: pip install torch --index-url https://download.pytorch.org/whl/cpu
+    "torch>=2.0",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
