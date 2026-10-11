@@ -278,8 +278,9 @@ with tab2:
     tbl_display.index = [i.replace("_", " ").title() for i in tbl_display.index]
     tbl_display.columns = ["CAGR %", "Vol %", "Sharpe", "Max DD %", "Max DD days"]
     st.dataframe(
-        tbl_display.style.background_gradient(subset=["CAGR %", "Sharpe"], cmap="RdYlGn")
-                         .background_gradient(subset=["Max DD %"], cmap="RdYlGn_r"),
+        tbl_display.style.format("{:.1f}", subset=["CAGR %", "Vol %", "Max DD %"])
+                         .format("{:.2f}", subset=["Sharpe"])
+                         .format("{:.0f}", subset=["Max DD days"]),
         use_container_width=True,
     )
 
@@ -378,12 +379,7 @@ with tab3:
             lambda x: f"IDR {x:,.0f}")
         perf_display["Contributed (IDR)"] = perf_display["Contributed (IDR)"].apply(
             lambda x: f"IDR {x:,.0f}")
-        st.dataframe(
-            perf_display.style.background_gradient(
-                subset=["XIRR %","Sharpe TWR"], cmap="RdYlGn"
-            ).background_gradient(subset=["Max DD %"], cmap="RdYlGn_r"),
-            use_container_width=True,
-        )
+        st.dataframe(perf_display, use_container_width=True)
         st.caption(
             "⚠️ Bootstrap 90% CI on equal-weight XIRR: **8.8% – 52%**. "
             "XIRR differences between strategies are smaller than window-to-window noise. "

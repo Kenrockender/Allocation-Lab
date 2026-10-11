@@ -2,6 +2,7 @@
 # Update after testing a new version locally.
 # Install the local package so src/allocation_lab is importable
 -e .
+matplotlib>=3.7.0
 numpy==2.4.6
 pandas==3.0.6
 pyarrow==25.0.1
