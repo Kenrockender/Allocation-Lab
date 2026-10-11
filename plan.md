@@ -151,7 +151,7 @@ Goal: a live demo plus a monthly routine that runs by itself.
 - [x] **M** "This month" report: given the contribution amount (from `config/local.yaml`) and fresh data, output the suggested allocation under the chosen strategy, with the weights and signals behind it. The public demo uses example numbers.
 - [x] **M** Scheduled data refresh and report generation with a GitHub Actions cron. Scheduled workflows on inactive public repos can get auto-disabled, so check for that. AWS EventBridge + Lambda is the alternative if you want to practice cloud.
 - [x] **M** Forward-test log: each month append the strategy's suggested weights and signals to `forward_log.csv`, then fill in the realized outcome later. Log weights, not rupiah amounts.
-- [ ] **S** Deploy the demo (Streamlit Community Cloud or another free host) and link it from the README and the portfolio site.
+- [x] **S** Deploy the demo (Streamlit Community Cloud or another free host) and link it from the README and the portfolio site.
 
 **Done when:** the live URL works, the monthly job runs without manual steps, and the forward log has its first entry. Tag `v0.2`.
 

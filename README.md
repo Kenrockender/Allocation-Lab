@@ -8,6 +8,8 @@ the four asset classes turned IDR 530 million of contributions into approximatel
 Bootstrap 90% CI on the equal-weight XIRR: **8.8% to 52%** — the wide interval reflects
 genuine uncertainty, not sloppy methodology.
 
+🔗 **Live demo:** https://allocation-lab88.streamlit.app
+
 > **Disclaimer:** Research project. Nothing here is financial advice.
 > Backtest results do not predict future returns.
 
